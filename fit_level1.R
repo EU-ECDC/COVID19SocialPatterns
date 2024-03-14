@@ -1,7 +1,8 @@
 nuts_fit <- function(country, n_chains, n_warmups, n_iter, n_thin, 
-                     n_adapt_delta,n_max_treedepth){
-  fit_by_country <-  stan("m1_penalised.stan", 
-                          data = data_to_stan_list(country), 
+                     n_adapt_delta,n_max_treedepth,aa,tt,ss){
+  fit_by_country <-  stan("m1_penalised_test.stan",
+                          #"m1_penalised.stan", 
+                          data = data_to_stan_list(country,aa,tt,ss), 
                           pars = parameters , 
                           #init = inits(country), 
                           chains = n_chains, 
