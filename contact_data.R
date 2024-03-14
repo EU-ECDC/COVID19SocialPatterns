@@ -21,7 +21,7 @@ contact_data <- function(country){
 }
 
 
-data_to_stan_list <- function(country){
+data_to_stan_list <- function(country,aa,tt,ss){
   stan_data_penalised <- list(
   I = ncol(contact_data(country)[[2]][,-1]),
   T = nrow(contact_data(country)[[2]][,-1]),
@@ -31,7 +31,10 @@ data_to_stan_list <- function(country){
   knots = unname(quantile(c(1:nrow(contact_data(country)[[2]][,-1])),probs=seq(from=0, to=1, length.out = n_knots))),
   Y = as.matrix(contact_data(country)[[2]][,-1]),
   X = t(as.matrix(contact_data(country)[[1]][,])),
-  time = c(1:nrow(contact_data(country)[[2]][,-1]))
+  time = c(1:nrow(contact_data(country)[[2]][,-1]),
+  aa = n_aa,
+  tt = n_tt,
+  ss = n_ss)
   )
   
   return(stan_data_penalised)
