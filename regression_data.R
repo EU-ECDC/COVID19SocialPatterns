@@ -101,7 +101,11 @@ NPI_PD_var <- NPI_PD_comix%>%
 # apply MCA
 mca1 = MCA(NPI_PD_var, graph = FALSE)
 
-independent <- as.data.frame(mca1$ind$coord[, 1:5])
+if (ncol(NPI_PD_var)>=5){
+  independent <- as.data.frame(mca1$ind$coord[, 1:5])
+}else if (ncol(NPI_PD_var)<5){
+  independent <- as.data.frame(mca1$ind$coord[, 1:4])
+}
 
 return(independent)
 }
