@@ -22,7 +22,8 @@ diagnostics <- function(country) {
 }
 
 fitted_beta <- function(country){
-  
+
+#loaded_fit <-   loaded_data
 loaded_fit <- load_fit(country)  
 comix_matrix <- as.matrix(contact_data(country)[[2]][,-1])
 beta_labels <- c("Home", "Work", "School", "Other")
@@ -50,8 +51,10 @@ return(figure1)
 
 }
 
+
 fitted_contacts <- function(country){
   
+  #loaded_fit <-   loaded_data
   loaded_fit <- load_fit(country)  
   time <- c(1:nrow(contact_data(country)[[2]][,-1]))
   comix_matrix <- as.matrix(contact_data(country)[[2]][,-1])
@@ -105,6 +108,31 @@ fitted_contacts <- function(country){
                          ncol = 3, nrow = 3,
                          common.legend = TRUE,
                          legend = "bottom")
+
+  } else if (num_cols==16){
+    y_labels <- c(
+      "Average number of contacts [0,18) to [0,18)",
+      "Average number of contacts [0,18) to [18,45)",
+      "Average number of contacts [0,18) to [45,64)",
+      "Average number of contacts [0,18) to 65+",
+      "Average number of contacts [18,45) to [0,18)",
+      "Average number of contacts [18,45) to [18,45)",
+      "Average number of contacts [18,45) to [45,64)",
+      "Average number of contacts [18,45) to 65+",
+      "Average number of contacts [45,64) to [0,18)",
+      "Average number of contacts [45,64) to [18,45)",
+      "Average number of contacts [45,64) to [45,64)",
+      "Average number of contacts [45,64) to 65+",
+      "Average number of contacts 65+ to [0,18)",
+      "Average number of contacts 65+ to [18,45)",
+      "Average number of contacts 65+ to [45,64)",
+      "Average number of contacts 65+ to 65+")
+    
+    figure2 <- ggarrange(plotlist = lapply(1:num_cols, create_plot),
+                         labels = "AUTO",
+                         ncol = 4, nrow = 4,
+                         common.legend = TRUE,
+                         legend = "bottom") 
     
   } else if (num_cols==49){
     y_labels <- c(
