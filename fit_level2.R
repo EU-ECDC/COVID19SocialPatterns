@@ -1,8 +1,8 @@
-nuts_reg <- function(country, n_chains, n_warmups, n_iter, n_thin, 
+nuts_reg <- function(country, percentile, n_chains, n_warmups, n_iter, n_thin, 
                      n_adapt_delta,n_max_treedepth){
   
-  reg_by_country <-  stan("MV_Reg_new.stan", 
-                          data = reg_data_to_stan_list(country), 
+  reg_by_country <-  stan("MVR_out_of_sample.stan", 
+                          data = reg_data_to_stan_list(country, percentile), 
                           pars = parameters , 
                           #init = inits(country), 
                           chains = n_chains, 
@@ -14,16 +14,17 @@ nuts_reg <- function(country, n_chains, n_warmups, n_iter, n_thin,
   return(reg_by_country)
 }
 
-load_reg_fit <- function(country) {
-  valid_countries <- c("AT", "BE", "HR", "DK", "EE", "FI", "FR", "GR", "HU", 
-                       "IT", "LT", "NL", "PL", "PT", "SK", "SI", "ES", "CH")
+load_reg_fit <- function(country, percentile) {
+  valid_countries <- c("AT", "BE", "HR", "DK", "EE", 
+                       "FI", "FR", "GR", "HU", 
+                       "IT", "LT", "NL", "PL", 
+                       "PT", "SK", "SI", "ES")
   
   if (!country %in% valid_countries) {
     stop("Invalid country. Please choose from: ", paste(valid_countries, collapse = ", "))
   }
   
-  #data_file <- paste0('C:/Users/zd22230/OneDrive - University of Bristol/ContactPatternsAC/Rfiles/TVEM_results/knots10/',country, '_TVEM.RData')
-  data_file <- paste0('C:/Users/zd22230/OneDrive - University of Bristol/ContactPatternsAC/Rfiles/MVNreg_results/knots50/',country, '_TVEM.RData')
+  data_file <- paste0('C:/Users/zd22230/OneDrive - University of Bristol/ContactPatternsAC/Rfiles/MVNreg_results/knots10_interc/', country, '_', percentile, '_MVR.RData')
   
   if (file.exists(data_file)) {
     loaded_env <- new.env()
