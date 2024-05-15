@@ -1,5 +1,5 @@
 NPI_data <- function(country){
-  NPI_path <- 'C:/Users/zd22230/OneDrive - University of Bristol/ContactPatternsAC/Rfiles/NPI/'
+  NPI_path <- 'data/NPI/'
   NPI_file <- file.path(NPI_path, paste0(country, '.csv'))
   
   if (!file.exists(NPI_file)){

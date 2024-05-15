@@ -20,7 +20,7 @@ load_fit <- function(country) {
   if (!country %in% valid_countries) {
     stop("Invalid country. Please choose from: ", paste(valid_countries, collapse = ", "))
   }
-  data_file <- paste0('C:/Users/zd22230/OneDrive - University of Bristol/ContactPatternsAC/Rfiles/TVEM_results/knots10_interc/',country, '_TVEM.RData')
+  data_file <- paste0('outputs_level1/',country, '_TVEM.RData')
   
   if (file.exists(data_file)) {
     loaded_env <- new.env()

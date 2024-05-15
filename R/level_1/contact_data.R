@@ -1,6 +1,6 @@
 contact_data <- function(country){
-  polymod_path <- 'C:/Users/zd22230/OneDrive - University of Bristol/ContactPatternsAC/Rfiles/Polymod/'
-  comix_path <- 'C:/Users/zd22230/OneDrive - University of Bristol/ContactPatternsAC/Rfiles/contact_matrix_EC/'
+  polymod_path <- 'data/POLYMOD/'
+  comix_path <- 'data/CoMix/'
   
   polymod_file <- file.path(polymod_path, paste0(country, '.csv'))
   comix_file <- file.path(comix_path, paste0(country, '.csv'))

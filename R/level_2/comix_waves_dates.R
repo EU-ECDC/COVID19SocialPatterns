@@ -1,5 +1,5 @@
 comix_dates <- function(country){
-  comix_dates_path <- 'C:/Users/zd22230/OneDrive - University of Bristol/ContactPatternsAC/Rfiles/comix_dates/'
+  comix_dates_path <- 'data/comix_dates/'
   comix_dates_file <- file.path(comix_dates_path, paste0(country, '.csv'))
   
   if (!file.exists(comix_dates_file)){
