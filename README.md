@@ -19,7 +19,8 @@ The R folder contains all the scripts and functions. The following files/folders
 
 [level_2](https://github.com/EU-ECDC/COVID19SocialPatterns/tree/main/R/level_2) contains all the scripts and functions used for Level 2 of the modelling framework:
 
-* [main_level2.R](https://github.com/EU-ECDC/COVID19SocialPatterns/blob/main/R/level_2/main_level2.R) runs the the multivariate regression analysis for each country using Stan’s No-U-Turn sampler variant of Hamiltonian Monte Carlo.
+* [main_level2.R](https://github.com/EU-ECDC/COVID19SocialPatterns/blob/main/R/level_2/main_level2.R) generates plots of the Multiple correspondence analysis on the NPIs, visual representations of the estimated change in contacts and the first 5 factor dimensions of the MCA on all the NPIs and runs the multivariate regression analysis for each CoMix country relating the estimated changes in social contact patterns to the implementation of NPIs. Generates plots of the predicted change in contacts for each country with CoMix data and the generated number of contacts between age groups both for countries with and without CoMix data.
+
 
 * [NPI_data.R](https://github.com/EU-ECDC/COVID19SocialPatterns/blob/main/R/level_2/NPI_data.R)
 
