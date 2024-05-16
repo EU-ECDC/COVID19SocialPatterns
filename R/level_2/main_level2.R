@@ -46,20 +46,6 @@ parameters = c("delta0","delta", "L_Omega", "L_sigma",
                "mu_pred", "beta_pred","C_pred")
 
 for (country in countries) {
-  for (percentile in percentiles){
-  fig1 <- estBeta_mcaNPI(country, percentile)
-  
-  if (!is.null(fig1)) {
-    png(filename = paste0('figures/reg_data/', country, '_', percentile,  '_dep_indep.png'),
-        width = 900, height = 600)  # Set the width and height as per your requirements
-    
-    print(fig1)
-    dev.off()
-    }
-  }
-}
-
-for (country in countries) {
   mca_fig <- MCA_plot(country)
   if (!is.null(mca_fig)) {
     png(filename = paste0('figures/mca_plots/', country, '_mca.png'),
@@ -67,6 +53,20 @@ for (country in countries) {
     
     print(mca_fig)
     dev.off()
+  }
+}
+
+for (country in countries) {
+  for (percentile in percentiles){
+    fig1 <- estBeta_mcaNPI(country, percentile)
+    
+    if (!is.null(fig1)) {
+      png(filename = paste0('figures/reg_data/', country, '_', percentile,  '_dep_indep.png'),
+          width = 900, height = 600)  # Set the width and height as per your requirements
+      
+      print(fig1)
+      dev.off()
+    }
   }
 }
 
