@@ -9,13 +9,13 @@ The R folder contains all the scripts and functions. The following files/folders
 
 [level_1](https://github.com/EU-ECDC/COVID19SocialPatterns/tree/main/R/level_1) contains all the scripts and functions used for Level 1 of the modelling framework:
 
-* [main_level1.R](https://github.com/EU-ECDC/COVID19SocialPatterns/blob/main/R/level_1/main_level1.R) runs the time-varying effect model (TVEM) for all countries with CoMix data using Stan’s No-U-Turn sampler variant of Hamiltonian Monte Carlo, saves the outputs and generates .
+* [main_level1.R](https://github.com/EU-ECDC/COVID19SocialPatterns/blob/main/R/level_1/main_level1.R) runs the time-varying effect model (TVEM) for each country with CoMix data using Stan’s No-U-Turn sampler variant of Hamiltonian Monte Carlo and saves outputs and generated figures of the estimated coefficient functions and posterior predictive checks.
 
-* [contact_data.R](https://github.com/EU-ECDC/COVID19SocialPatterns/blob/main/R/level_1/contact_data.R) contains a function which modifies the data into a form suitable for Stan for each country.
+* [contact_data.R](https://github.com/EU-ECDC/COVID19SocialPatterns/blob/main/R/level_1/contact_data.R) contains functions to load the POLYMOD and CoMix data and modify the data into a form suitable for Stan.
 
-* [fit_level1.R](https://github.com/EU-ECDC/COVID19SocialPatterns/blob/main/R/level_1/fit_level1.R)
+* [fit_level1.R](https://github.com/EU-ECDC/COVID19SocialPatterns/blob/main/R/level_1/fit_level1.R) contains functions to fit a model defined in the Stan modeling language and return the fitted result as an instance of stanfit and load fitted model results. 
 
-* [figures_level1.R](https://github.com/EU-ECDC/COVID19SocialPatterns/blob/main/R/level_1/figures_level1.R)
+* [figures_level1.R](https://github.com/EU-ECDC/COVID19SocialPatterns/blob/main/R/level_1/figures_level1.R) contains functions to provide a comprehensive set of diagnostic plots to assess the convergence and quality of the fitted model, to visualise the estimated coefficient functions and the predicted number of contacts between age groups.
 
 [level_2](https://github.com/EU-ECDC/COVID19SocialPatterns/tree/main/R/level_2) contains all the scripts and functions used for Level 2 of the modelling framework:
 
