@@ -31,18 +31,17 @@ The R folder contains all the scripts and functions. The following files/folders
 
 * [reg_dep_indep.R](https://github.com/EU-ECDC/COVID19SocialPatterns/blob/main/R/level_2/reg_dep_indep.R) contains a function to visualize the relationship between estimated changes in contacts (represented by TVEM posterior estimates of the coefficient functions) and the underlying factors identified in NPI data (through MCA) in a single plot.
 
-* [noComix_C.R](https://github.com/EU-ECDC/COVID19SocialPatterns/blob/main/R/level_2/noComix_C.R)
+* [noComix_C.R](https://github.com/EU-ECDC/COVID19SocialPatterns/blob/main/R/level_2/noComix_C.R) contains a function to generate the average number of contacts between age groups in a country without CoMix data based on the estimated changes in contacts from a country with CoMix data and NPI data of the country without CoMix data.
 
-* [figures_level2.R](https://github.com/EU-ECDC/COVID19SocialPatterns/blob/main/R/level_2/figures_level2.R)
-
+* [figures_level2.R](https://github.com/EU-ECDC/COVID19SocialPatterns/blob/main/R/level_2/figures_level2.R) contains functions to provide a set of diagnostic plots to assess the convergence and quality of the multivariate regression model, to visualise the estimated coefficient functions and the predicted number of contacts between age groups.
 
 [stan_models](https://github.com/EU-ECDC/COVID19SocialPatterns/tree/main/stan_models) contains all the [Stan](https://mc-stan.org/) model statements used:
 
-* [m1_penalised_test.stan](https://github.com/EU-ECDC/COVID19SocialPatterns/blob/main/stan_models/m1_penalised_test.stan) TVEM
+* [m1_penalised_test.stan](https://github.com/EU-ECDC/COVID19SocialPatterns/blob/main/stan_models/m1_penalised_test.stan) time-varying effect model
 
-* [m2_penalised.stan](https://github.com/EU-ECDC/COVID19SocialPatterns/blob/main/stan_models/m2_penalised.stan) TVEM with pair specific random effects
+* [m2_penalised.stan](https://github.com/EU-ECDC/COVID19SocialPatterns/blob/main/stan_models/m2_penalised.stan) time-varying effect model with pair specific random effects
 
-* [MVR_out_of_sample.stan](https://github.com/EU-ECDC/COVID19SocialPatterns/blob/main/stan_models/MVR_out_of_sample.stan) contains the multivariate regression model
+* [MVR_out_of_sample.stan](https://github.com/EU-ECDC/COVID19SocialPatterns/blob/main/stan_models/MVR_out_of_sample.stan) multivariate regression model
 
 [data](https://github.com/EU-ECDC/COVID19SocialPatterns/tree/main/data) contains input data.
 
