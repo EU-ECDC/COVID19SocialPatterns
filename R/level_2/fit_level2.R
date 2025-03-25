@@ -1,3 +1,19 @@
+#' Fit a Multivariate Regression Model using Stan for a Given Country
+#'
+#' This function fits a multivariate regression model with out-of-sample predictions
+#' using Stan. It processes data for a specified country and percentile threshold,
+#' then runs the Stan model with the provided MCMC parameters.
+#'
+#' @param country A character string specifying the country code.
+#' @param percentile A numeric value indicating the percentile threshold for data processing.
+#' @param n_chains An integer specifying the number of MCMC chains to run.
+#' @param n_warmups An integer specifying the number of warmup iterations.
+#' @param n_iter An integer specifying the total number of iterations (including warmup).
+#' @param n_thin An integer specifying the thinning interval for MCMC samples.
+#' @param n_adapt_delta A numeric value between 0 and 1 controlling the target acceptance rate.
+#' @param n_max_treedepth An integer specifying the maximum tree depth for the NUTS sampler.
+#'
+#' @return A fitted Stan model object containing the posterior samples.
 nuts_reg <- function(country, percentile, n_chains, n_warmups, n_iter, n_thin, 
                      n_adapt_delta,n_max_treedepth){
   
@@ -14,6 +30,16 @@ nuts_reg <- function(country, percentile, n_chains, n_warmups, n_iter, n_thin,
   return(reg_by_country)
 }
 
+#' Load a Fitted Regression Model from Saved RData File
+#'
+#' This function loads a previously fitted multivariate regression model for a given
+#' country and percentile threshold from an RData file. It checks if the country is
+#' valid and if the file exists before attempting to load the data.
+#'
+#' @param country A character string specifying the country code.
+#' @param percentile A numeric value indicating the percentile threshold used in the model.
+#'
+#' @return A fitted Stan model object containing the posterior samples.
 load_reg_fit <- function(country, percentile) {
   valid_countries <- c("AT", "BE", "HR", "DK", "EE", 
                        "FI", "FR", "GR", "HU", 

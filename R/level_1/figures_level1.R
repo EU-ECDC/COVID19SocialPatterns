@@ -1,3 +1,16 @@
+#' Generate diagnostic plots and checks for a Stan model fit
+#'
+#' This function loads a Stan model fit for a specified country and generates
+#' a comprehensive set of diagnostic plots to assess model convergence and parameter behavior.
+#'
+#' @param country A character string specifying the country to analyze
+#' @return A list containing the following diagnostic elements:
+#'   \item{hmc_diagnosis}{Results from HMC diagnostic checks}
+#'   \item{traceplot_lp}{Traceplot of log posterior and hyperparameters}
+#'   \item{traceplot_beta}{Traceplot of beta parameters}
+#'   \item{stan_dens_lp}{Density plots for log posterior and hyperparameters}
+#'   \item{stan_dens_beta}{Density plots for beta parameters}
+#'   \item{pairs_plot}{Pairs plot showing parameter correlations}
 diagnostics <- function(country) {
   
   loaded_fit <- load_fit(country)
@@ -21,41 +34,86 @@ diagnostics <- function(country) {
               pairs_plot = pairs_plot))
 }
 
-fitted_beta <- function(country){
 
-#loaded_fit <-   loaded_data
-loaded_fit <- load_fit(country)  
-comix_matrix <- as.matrix(contact_data(country)[[2]][,-1])
-beta_labels <- c("Home", "Work", "School", "Other")
 
-plot_list <- list()
-
-for (i in seq_along(beta_labels)) {
-  beta <- as.data.frame(summary(
-    loaded_fit, pars = paste0("beta", i), probs = c(0.05, 0.5, 0.95))$summary)
-  colnames(beta) <- make.names(colnames(beta))
-  
-  plot <- ggplot(beta, mapping = aes(x = c(1:nrow(comix_matrix)))) +
-    geom_ribbon(aes(ymin = X5., ymax = X95.), alpha = 0.35) +
-    geom_line(mapping = aes(x = c(1:nrow(comix_matrix)), y = X50.),) + 
-    labs(x = "Wave", y = paste("beta", beta_labels[i]))
-  
-  plot_list[[i]] <- plot
-}
-
-figure1 <- ggarrange(plotlist = plot_list, 
-          labels = "AUTO",
-          ncol = 2, nrow = 2)
-
-return(figure1)
-
+#' Adjust theme elements based on plot position in a grid
+#'
+#' This helper function modifies ggplot theme elements to create cleaner
+#' multi-panel plots with shared axes. It selectively shows/hides axis elements
+#' based on the plot's position in the grid.
+#'
+#' @param plot A ggplot object to be modified
+#' @param pos Integer indicating position in the grid: 1=top-left, 2=top-right, 
+#'   3=bottom-left, 4=bottom-right
+#' @return A ggplot object with modified theme elements
+adjust_theme <- function(plot, pos) {
+  theme_settings <- list(
+    axis.title.x = if (pos %in% c(3, 4)) element_text() else element_blank(),
+    axis.text.x = if (pos %in% c(3, 4)) element_text() else element_blank(),
+    axis.ticks.x = if (pos %in% c(3, 4)) element_line() else element_blank(),
+    axis.title.y = if (pos %in% c(1, 3)) element_text() else element_blank(),
+    axis.text.y = if (pos %in% c(1, 3)) element_text() else element_blank(),
+    axis.ticks.y = if (pos %in% c(1, 3)) element_line() else element_blank()
+  )
+  plot + theme(theme_settings)
 }
 
 
+
+#' Create plots of the fitted beta parameters over time
+#'
+#' This function visualizes the temporal trends in the beta parameters 
+#' (contact coefficients) for different contact settings (Home, Work, School, Other).
+#' It creates a 2x2 grid of plots showing posterior medians and 90% credible intervals.
+#'
+#' @param country A character string specifying the country to analyze
+#' @return A ggplot object containing a 2x2 grid of plots for beta parameters
+fitted_beta <- function(country) {
+  # Load the Stan model fit for the specified country
+  loaded_fit <- load_fit(country)
+  
+  comix_matrix <- as.matrix(contact_data(country)[[2]][,-1])
+  beta_labels <- c("Home", "Work", "School", "Other")
+  
+  plot_list <- list()
+  # Create a plot for each beta parameter
+  for (i in seq_along(beta_labels)) {
+    # Extract posterior summary statistics (median and 90% CI) for this beta
+    beta <- as.data.frame(summary(
+      loaded_fit, pars = paste0("beta", i), probs = c(0.05, 0.5, 0.95))$summary)
+    colnames(beta) <- make.names(colnames(beta))
+    
+    plot <- ggplot(beta, mapping = aes(x = c(1:nrow(comix_matrix)))) +
+      geom_ribbon(aes(ymin = X5., ymax = X95.), alpha = 0.35) +
+      geom_line(mapping = aes(x = c(1:nrow(comix_matrix)), y = X50.)) + 
+      labs(x = "Wave", y = paste("beta", beta_labels[i])) +
+      theme_minimal(base_size = 14) +  # Increase base font size
+      theme(plot.margin = unit(c(1, 1, 1, 1), "lines"))
+    # Adjust axes based on plot position (1-4)
+    plot_list[[i]] <- adjust_theme(plot, i)
+  }
+  
+  figure1 <- ggarrange(plotlist = plot_list, 
+                       labels = "AUTO",
+                       ncol = 2, nrow = 2)
+  
+  return(figure1)
+}
+
+
+
+#' Create plots of fitted contact rates between age groups over time
+#'
+#' This function visualizes the temporal trends in contact rates between different
+#' age groups. It generates a grid of plots showing posterior predictions (median and
+#' 90% credible intervals) alongside observed CoMix data points for each age group pair.
+#'
+#' @param country A character string specifying the country to analyze
+#' @return A ggplot object containing a grid of plots for contacts between age groups
 fitted_contacts <- function(country){
-  
-  #loaded_fit <-   loaded_data
-  loaded_fit <- load_fit(country)  
+  # Load the Stan model fit for the specified country
+  loaded_fit <- load_fit(country)
+  # Create a sequence representing time points/waves
   time <- c(1:nrow(contact_data(country)[[2]][,-1]))
   comix_matrix <- as.matrix(contact_data(country)[[2]][,-1])
   num_rows <- nrow(comix_matrix)
@@ -68,6 +126,10 @@ fitted_contacts <- function(country){
     }
   }
   
+  #' Helper function to create a plot for a specific contact type
+  #'
+  #' @param j Column index in the contact matrix representing a specific contact type
+  #' @return A ggplot object for the specified contact type
   create_plot <- function(j) {
     y_pred <- cbind(
       as.data.frame(summary(loaded_fit, pars = param_names[, j], 
@@ -91,106 +153,30 @@ fitted_contacts <- function(country){
       )
   }
  
-  if (num_cols==9){
     y_labels <- c(
-      "Average number of contacts [18,45) to [18,45)",
-      "Average number of contacts [18,45) to [45,64)",
-      "Average number of contacts [18,45) to 65+",
-      "Average number of contacts [45,64) to [18,45)",
-      "Average number of contacts [45,64) to [45,64)",
-      "Average number of contacts [45,64) to 65+",
-      "Average number of contacts 65+ to [18,45)",
-      "Average number of contacts 65+ to [45,64)",
-      "Average number of contacts 65+ to 65+")
-    
-    figure2 <- ggarrange(plotlist = lapply(1:num_cols, create_plot),
-                         labels = "AUTO",
-                         ncol = 3, nrow = 3,
-                         common.legend = TRUE,
-                         legend = "bottom")
-
-  } else if (num_cols==16){
-    y_labels <- c(
-      "Average number of contacts [0,18) to [0,18)",
-      "Average number of contacts [0,18) to [18,45)",
-      "Average number of contacts [0,18) to [45,64)",
-      "Average number of contacts [0,18) to 65+",
-      "Average number of contacts [18,45) to [0,18)",
-      "Average number of contacts [18,45) to [18,45)",
-      "Average number of contacts [18,45) to [45,64)",
-      "Average number of contacts [18,45) to 65+",
-      "Average number of contacts [45,64) to [0,18)",
-      "Average number of contacts [45,64) to [18,45)",
-      "Average number of contacts [45,64) to [45,64)",
-      "Average number of contacts [45,64) to 65+",
-      "Average number of contacts 65+ to [0,18)",
-      "Average number of contacts 65+ to [18,45)",
-      "Average number of contacts 65+ to [45,64)",
-      "Average number of contacts 65+ to 65+")
+      "0-18 to 0-18",
+      "0-18 to 18-45",
+      "0-18 to 45-64",
+      "0-18 to 65+",
+      "18-45 to 0-18",
+      "18-45 to 18-45",
+      "18-45 to 45-64",
+      "18-45 to 65+",
+      "45-64 to 0-18",
+      "45-64 to 18-45",
+      "45-64 to 45-64",
+      "45-64 to 65+",
+      "65+ to 0-18",
+      "65+ to 18-45",
+      "65+ to 45-64",
+      "65+ to 65+")
     
     figure2 <- ggarrange(plotlist = lapply(1:num_cols, create_plot),
                          labels = "AUTO",
                          ncol = 4, nrow = 4,
                          common.legend = TRUE,
-                         legend = "bottom") 
-    
-  } else if (num_cols==49){
-    y_labels <- c(
-      "Average number of contacts [0,12) to [0,12)",
-      "Average number of contacts [0,12) to [12,18)",
-      "Average number of contacts [0,12) to [18,25)",
-      "Average number of contacts [0,12) to [25,45)",
-      "Average number of contacts [0,12) to [45,65)",
-      "Average number of contacts [0,12) to [65,85)",
-      "Average number of contacts [0,12) to 85+",
-      "Average number of contacts [12,18) to [0,12)",
-      "Average number of contacts [12,18) to [12,18)",
-      "Average number of contacts [12,18) to [18,25)",
-      "Average number of contacts [12,18) to [25,45)",
-      "Average number of contacts [12,18) to [45,65)",
-      "Average number of contacts [12,18) to [65,85)",
-      "Average number of contacts [12,18) to 85+",
-      "Average number of contacts [18,25) to [0,12)",
-      "Average number of contacts [18,25) to [12,18)",
-      "Average number of contacts [18,25) to [18,25)",
-      "Average number of contacts [18,25) to [25,45)",
-      "Average number of contacts [18,25) to [45,65)",
-      "Average number of contacts [18,25) to [65,85)",
-      "Average number of contacts [18,25) to 85+",
-      "Average number of contacts [25,45) to [0,12)",
-      "Average number of contacts [25,45) to [12,18)",
-      "Average number of contacts [25,45) to [18,25)",
-      "Average number of contacts [25,45) to [25,45)",
-      "Average number of contacts [25,45) to [45,65)",
-      "Average number of contacts [25,45) to [65,85)",
-      "Average number of contacts [25,45) to 85+",
-      "Average number of contacts [45,65) to [0,12)",
-      "Average number of contacts [45,65) to [12,18)",
-      "Average number of contacts [45,65) to [18,25)",
-      "Average number of contacts [45,65) to [25,45)",
-      "Average number of contacts [45,65) to [45,65)",
-      "Average number of contacts [45,65) to [65,85)",
-      "Average number of contacts [45,65) to 85+",
-      "Average number of contacts [65,85) to [0,12)",
-      "Average number of contacts [65,85) to [12,18)",
-      "Average number of contacts [65,85) to [18,25)",
-      "Average number of contacts [65,85) to [25,45)",
-      "Average number of contacts [65,85) to [45,65)",
-      "Average number of contacts [65,85) to [65,85)",
-      "Average number of contacts [65,85) to 85+",
-      "Average number of contacts 85+ to [0,12)",
-      "Average number of contacts 85+ to [12,18)",
-      "Average number of contacts 85+ to [18,25)",
-      "Average number of contacts 85+ to [25,45)",
-      "Average number of contacts 85+ to [45,65)",
-      "Average number of contacts 85+ to [65,85)",
-      "Average number of contacts 85+ to 85+")
-    
-    figure2 <- ggarrange(plotlist = lapply(1:num_cols, create_plot),
-                         labels = "AUTO",
-                         ncol = 7, nrow = 7,
-                         common.legend = TRUE,
-                         legend = "bottom")}
-
+                         legend = "bottom")
 return(figure2)
 }
+
+
