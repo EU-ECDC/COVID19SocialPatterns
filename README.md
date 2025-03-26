@@ -174,3 +174,10 @@ This will:
 4. Perform clustering and matching to extend predictions to non-CoMix countries
 
 Individual components can also be run separately by sourcing the respective scripts.
+
+## Authors
+* Anastasia Chatzilena: <a.chatzilena@bristol.ac.uk>
+* Ewan Colman: <ewan.colman@bristol.ac.uk>
+* Nikolaos Demiris
+* Ellen Brooks-Pollock: <ellen.brooks-pollock@bristol.ac.uk>
+* Leon Danon: <l.danon@bristol.ac.uk>
