@@ -178,6 +178,6 @@ Individual components can also be run separately by sourcing the respective scri
 ## Authors
 * Anastasia Chatzilena: <a.chatzilena@bristol.ac.uk>
 * Ewan Colman: <ewan.colman@bristol.ac.uk>
-* Nikolaos Demiris
+* Nikolaos Demiris: <nikos@aueb.gr>
 * Ellen Brooks-Pollock: <ellen.brooks-pollock@bristol.ac.uk>
 * Leon Danon: <l.danon@bristol.ac.uk>
