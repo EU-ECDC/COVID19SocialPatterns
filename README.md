@@ -70,7 +70,7 @@ where $Z_{ij}^k$ denotes the pre-pandemic average number of contacts for individ
 
 ### Main Script
   
-* [main.R](R/main.R) - The main script that runs the entire pipeline in three steps:
+* [main.R](main.R) - The main script that runs the entire pipeline in three steps:
  1. Creates an EU map with contact data coverage visualization and generates POLYMOD and CoMix heatmaps for each country
  2. Runs the Level 1 Time-Varying Effect Models (TVEM) analysis for each country with CoMix data using Stan’s No-U-Turn sampler variant of Hamiltonian Monte Carlo. Saves outputs and generated figures of the estimated coefficient functions and posterior predictive checks.
  3. Runs the Level 2 Multivariate Regression (MVR) analysis and performs clustering/matching for non-CoMix countries
