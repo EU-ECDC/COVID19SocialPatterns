@@ -1,3 +1,6 @@
+// Fixed pair-specific intercept, derived as the time-average of 
+// the per-wave projection residuals
+
 functions {
   vector build_b_spline(real[] t, real[] ext_knots, int ind, int order);
   vector build_b_spline(real[] t, real[] ext_knots, int ind, int order) {
@@ -39,6 +42,7 @@ data {
   vector[num_knots] knots;  // the sequence of knots
   //vector[N] Y;
   //vector[I] X;        // In our case X is 1 observation in time
+  vector[I] eta;   // NEW: fixed intercept, precomputed in R
   matrix[I, K] X;        // Covariate matrix
   matrix[T,I] Y;
   real<lower=0> s_aa;
@@ -69,7 +73,6 @@ parameters {
   real<lower=0> tau2;
   real<lower=0> tau3;
   real<lower=0> tau4;
-  vector[I] beta0;
 }
 transformed parameters {
   row_vector[num_basis] a1; // spline coefficients
@@ -99,16 +102,10 @@ transformed parameters {
 }
 model {
   // Priors
-  beta0 ~ normal(0, 1);
   a_raw1 ~ normal(0, s_aa);
   a_raw2 ~ normal(0, s_aa);
   a_raw3 ~ normal(0, s_aa);
   a_raw4 ~ normal(0, s_aa);
-  //tau1 ~ normal(0, 1);
-  //tau2 ~ normal(0, 1);
-  //tau3 ~ normal(0,1);
-  //tau4 ~ normal(0, 1);
-  //sigma ~ normal(0, 1);
   
   tau1 ~ cauchy(0,s_tt1);
   tau2 ~ cauchy(0,s_tt2);
@@ -119,7 +116,7 @@ model {
   //Likelihood
   for (i in 1:I){
     for (t in 1:T){
-      Y[t,i] ~ normal(beta0[i]+beta1[t]*X[i,1]+beta2[t]*X[i,2]+beta3[t]*X[i,3]+beta4[t]*X[i,4], sigma);
+      Y[t,i] ~ normal(eta[i]+beta1[t]*X[i,1]+beta2[t]*X[i,2]+beta3[t]*X[i,3]+beta4[t]*X[i,4], sigma);
     }
   }
 }
@@ -130,8 +127,8 @@ generated quantities {
   
   for (i in 1:I){
     for (t in 1:T) {
-      y_pred[t,i] = normal_rng(beta0[i]+beta1[t]*X[i,1]+beta2[t]*X[i,2]+beta3[t]*X[i,3]+beta4[t]*X[i,4], sigma);
-      log_lik[t,i] = normal_lpdf(Y[t,i]| beta0[i]+beta1[t]*X[i,1]+beta2[t]*X[i,2]+beta3[t]*X[i,3]+beta4[t]*X[i,4], sigma);
+      y_pred[t,i] = normal_rng(eta[i]+beta1[t]*X[i,1]+beta2[t]*X[i,2]+beta3[t]*X[i,3]+beta4[t]*X[i,4], sigma);
+      log_lik[t,i] = normal_lpdf(Y[t,i]| beta1[t]*X[i,1]+beta2[t]*X[i,2]+beta3[t]*X[i,3]+beta4[t]*X[i,4], sigma);
     }
   }
   dev = (-2) * sum(log_lik);

@@ -1,3 +1,5 @@
+// No Intercept
+
 functions {
   vector build_b_spline(real[] t, real[] ext_knots, int ind, int order);
   vector build_b_spline(real[] t, real[] ext_knots, int ind, int order) {
@@ -102,11 +104,6 @@ model {
   a_raw2 ~ normal(0, s_aa);
   a_raw3 ~ normal(0, s_aa);
   a_raw4 ~ normal(0, s_aa);
-  //tau1 ~ normal(0, 1);
-  //tau2 ~ normal(0, 1);
-  //tau3 ~ normal(0,1);
-  //tau4 ~ normal(0, 1);
-  //sigma ~ normal(0, 1);
   
   tau1 ~ cauchy(0,s_tt1);
   tau2 ~ cauchy(0,s_tt2);
