@@ -52,7 +52,7 @@ where $\hat{\mathbf{\beta_t}}=(\hat{\beta_{1t}}, \hat{\beta_{2t}}, \hat{\beta_{3
 ### Infer pandemic contact patterns for EU/EEA Member States with pre-pandemic data (but not pandemic data)
 
 * Rely on estimates for the countries with CoMix data
-* For every target country without pandemic data (no CoMix country) assign a “neighbouring” country (CoMix country) with pandemic data.
+* For every target country without pandemic data (no CoMix country) assign a matched country (CoMix country) with pandemic data.
 * Summarise NPIs related to physical distancing by the first 5 factor dimensions of an MCA for each country
 * Compute the Euclidean distances between the factor dimensions matrices for all possible pairs of countries using the Frobenius norm and perform hierarchical clustering based on these distances
 * Identify a CoMix country within the same cluster as the target country and confirm that they also belong in the same cluster based on their socio-demographic characteristics according to Prem et al.(2017)
