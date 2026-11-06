@@ -484,6 +484,8 @@ pred_CM_full <- function(country, n_age_groups = NULL, age_group_labels = NULL) 
     # Get CoMix data
     comix_data <- data.frame(as.Date(time_ext$Date), unlist(df_complete[, j]))
     colnames(comix_data) <- c("time", "data")
+  
+    y_label <- paste0(age_groups[j])
     
     y_label <- paste0(age_groups[j])
     
