@@ -154,9 +154,9 @@ The R folder contains all the scripts and functions. The following files/folders
 
 [stan_models](stan_models/) contains all the [Stan](https://mc-stan.org/) model statements used:
 
-* [m1_penalised_test.stan](stan_models/m1_penalised_test.stan) time-varying effect model
+* [m1_penalised.stan](stan_models/m1_penalised_test.stan) time-varying effect model without intercept
 
-* [m2_penalised.stan](stan_models/m2_penalised.stan) time-varying effect model with pair specific random effects
+* [m2_penalised.stan](stan_models/m2_penalised.stan) time-varying effect model with fixed pair-specific intercept, derived as the time-average of the per-wave projection residuals
 
 * [MVR_out_of_sample.stan](stan_models/MVR_out_of_sample.stan) multivariate regression model
 
