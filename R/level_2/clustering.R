@@ -201,20 +201,55 @@ cluster_countries <- function(countries, methods = c("ward.D2", "single", "compl
   
   clustering_results <- list()
   
-  # Set up plotting layout based on number of methods
+  # Create a named vector to map method codes to descriptive names
+  method_names <- c(
+    "ward.D2" = "Ward's method",
+    "single" = "Nearest neighbor",
+    "complete" = "Farthest neighbor"
+  )
+  
+  # Save original graphical parameters to restore later
+  original_par <- par(no.readonly = TRUE)
+  
+  # If we have multiple methods, set up a custom layout
   if (length(methods) > 1) {
-    par(mfrow = c(1, length(methods)))
+    # Create a layout with space for plots, a main title, and a shared x-axis label
+    # The layout matrix now has:
+    # - Top row (1) for the main title
+    # - Middle row (2 to length(methods)+1) for the plots
+    # - Bottom row (length(methods)+2) for the shared x-axis label
+    layout_matrix <- rbind(
+      rep(1, length(methods)),                           # Main title row
+      matrix(2:(length(methods)+1), nrow = 1),           # Plots row
+      rep(length(methods)+2, length(methods))            # Shared x-axis label row
+    )
+    
+    layout(layout_matrix, heights = c(0.7, 4, 0.5))
+    
+    # First create the main title
+    par(mar = c(0, 0, 1, 0))
+    plot.new()
+    text(0.5, 0.5, "Hierarchical Clustering", cex = 1.5, font = 2)
+    
+    # Adjust margins for the dendrograms
+    par(mar = c(1, 4, 3, 2) + 0.1)  # Smaller bottom margin for plots
   }
   
   # Perform hierarchical clustering for each method
   for (method in methods) {
     hc <- hclust(dist_obj, method = method)
-    # Plot dendrogram
+    
+    # Get the descriptive name for the method
+    method_title <- if(method %in% names(method_names)) method_names[method] else method
+    
+    # Plot dendrogram with the descriptive title and without x-axis labels
     plot(hc, 
-         main = paste("Hierarchical Clustering -", method), 
-         xlab = "Countries", 
-         sub = paste("Distance method:", method, "| k =", k),
-         hang = -1)
+         main = method_title, 
+         xlab = "", # Remove individual x-axis label
+         sub = if(length(methods) == 1) paste("k =", k) else "",  # Only add k info if single plot
+         hang = -1,
+         axes = TRUE,
+         xaxt = if(length(methods) > 1) "n" else "s") # Hide x-axis ticks if multiple plots
     
     # Add cluster rectangles
     rect.hclust(hc, k = k, border = 2:6)
@@ -228,10 +263,20 @@ cluster_countries <- function(countries, methods = c("ward.D2", "single", "compl
     )
   }
   
-  # Reset plot layout
+  # If multiple methods, add the shared x-axis label
   if (length(methods) > 1) {
-    par(mfrow = c(1, 1))
+    # Set margins for the shared x-axis label
+    par(mar = c(0, 0, 0, 0))
+    # Create an empty plot for the shared x-axis label
+    plot.new()
+    text(0.5, 0.5, "Countries", cex = 1.2, font = 2)
+    
+    # Add a small note about k value somewhere in the figure
+    text(0.95, 0.2, paste("k =", k), cex = 0.9)
   }
+  
+  # Restore original graphical parameters
+  par(original_par)
   
   # Return clustering results and distance matrix
   return(list(

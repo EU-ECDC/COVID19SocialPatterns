@@ -10,18 +10,29 @@
 #'
 #' @param country Character string indicating the country to analyze
 #' @param percentile Character string indicating which percentile to extract ("50", "2.5", or "97.5")
+#' @param n_age_groups Integer. Number of age groups. If NULL, will be inferred from country's data.
 #' @return A tibble containing dates and interpolated beta coefficients
-fitted_beta_coefficients <- function(country,percentile){
+fitted_beta_coefficients <- function(country, percentile, n_age_groups){
   # Load the Stan fit for the specified country
-  loaded_fit <- load_fit(country)
+  loaded_fit <- load_fit(country, n_age_groups)
   posts <-  rstan::extract(loaded_fit)
+  
+  # Infer number of age groups if not provided
+  if (is.null(n_age_groups)) {
+    n_age_groups <- get_n_age_groups(country)
+    if (is.null(n_age_groups)) {
+      # Fallback to 4 for backward compatibility
+      n_age_groups <- 4
+      warning("Could not determine number of age groups, defaulting to 4")
+    }
+  }
   
   # Extract median, lower and upper confidence interval values for each beta coefficient
   median_beta1 = c(apply(posts$beta1, 2, median),NA)
   median_beta2 = c(apply(posts$beta2, 2, median),NA)
   median_beta3 = c(apply(posts$beta3, 2, median),NA)
   median_beta4 = c(apply(posts$beta4, 2, median),NA)
-
+  
   low_beta1 = c(apply(posts$beta1, 2, quantile, probs = c(0.025)),NA)
   low_beta2 = c(apply(posts$beta2, 2, quantile, probs = c(0.025)),NA)
   low_beta3 = c(apply(posts$beta3, 2, quantile, probs = c(0.025)),NA)
@@ -37,14 +48,14 @@ fitted_beta_coefficients <- function(country,percentile){
   }else if (percentile=="2.5"){
     dependent <- cbind(low_beta1,low_beta2,low_beta3,low_beta4)
   }else if (percentile=="97.5"){
-  dependent <- cbind(high_beta1,high_beta2,high_beta3,high_beta4)
+    dependent <- cbind(high_beta1,high_beta2,high_beta3,high_beta4)
   }
   # Create time variables for interpolation
   times <- c(comix_dates(country)[,1],max(comix_dates(country)[,2]))
   ext_dates <- seq(min(comix_dates(country)[,1]), max(comix_dates(country)[,2]), by = "days")
   numeric_dates <- as.numeric(times - min(times)) + 1
   wave <- c(1:length(times))
-
+  
   df1 <- tibble(x=numeric_dates,y=dependent[,1],wave)
   df2 <- tibble(x=numeric_dates,y=dependent[,2],wave)
   df3 <- tibble(x=numeric_dates,y=dependent[,3],wave)
@@ -86,25 +97,25 @@ fitted_beta_coefficients <- function(country,percentile){
     fill(gradient)%>% 
     mutate(y2=first(y) + (x-first(x)) *gradient)%>%
     mutate(y2=ifelse(!is.na(y2),y2,y))->df4_ext
- 
+  
   # Combine all interpolated data
   dependent_ext <- tibble(ext_dates,
-                        df1_ext$y, df1_ext$y2,
-                        df2_ext$y,df2_ext$y2,
-                        df3_ext$y,df3_ext$y2,
-                        df4_ext$y,df4_ext$y2)%>% 
-  filter(!is.na(df1_ext$y2))%>%
-  rename(Date = ext_dates,
-         beta1_w = `df1_ext$y`,
-         beta1 = `df1_ext$y2`,
-         beta2_w = `df2_ext$y`,
-         beta2 = `df2_ext$y2`,
-         beta3_w = `df3_ext$y`,
-         beta3 = `df3_ext$y2`,
-         beta4_w = `df4_ext$y`,
-         beta4 = `df4_ext$y2`,)
-
-return(dependent_ext)
+                          df1_ext$y, df1_ext$y2,
+                          df2_ext$y,df2_ext$y2,
+                          df3_ext$y,df3_ext$y2,
+                          df4_ext$y,df4_ext$y2)%>% 
+    filter(!is.na(df1_ext$y2))%>%
+    rename(Date = ext_dates,
+           beta1_w = `df1_ext$y`,
+           beta1 = `df1_ext$y2`,
+           beta2_w = `df2_ext$y`,
+           beta2 = `df2_ext$y2`,
+           beta3_w = `df3_ext$y`,
+           beta3 = `df3_ext$y2`,
+           beta4_w = `df4_ext$y`,
+           beta4 = `df4_ext$y2`,)
+  
+  return(dependent_ext)
 }
 
 #' Extract Intercept Values from Stan Fit
@@ -114,21 +125,32 @@ return(dependent_ext)
 #'
 #' @param country Character string indicating the country to analyze
 #' @param percentile Character string indicating which percentile to extract ("50", "2.5", or "97.5")
+#' @param n_age_groups Integer. Number of age groups. If NULL, will be inferred from country's data.
 #' @return A vector of intercept values
-fitted_interc <- function(country,percentile){
-  
-  loaded_fit <- load_fit(country)
-  posts <-  rstan::extract(loaded_fit)
-  
-  if (percentile=="50"){
-    fit_interc <- apply(posts$beta0, 2, median)
-  }else if (percentile=="2.5"){
-    fit_interc <- apply(posts$beta0, 2, quantile, probs = c(0.025))
-  }else if (percentile=="97.5"){
-    fit_interc <- apply(posts$beta0, 2, quantile, probs = c(0.975))
-  }
-  return(fit_interc)
-}
+# fitted_interc <- function(country, percentile, n_age_groups = NULL){
+#   
+#   loaded_fit <- load_fit(country, n_age_groups)
+#   posts <-  rstan::extract(loaded_fit)
+#   
+#   # Infer number of age groups if not provided
+#   if (is.null(n_age_groups)) {
+#     n_age_groups <- get_n_age_groups(country)
+#     if (is.null(n_age_groups)) {
+#       # Fallback to 4 for backward compatibility
+#       n_age_groups <- 4
+#       warning("Could not determine number of age groups, defaulting to 4")
+#     }
+#   }
+#   
+#   if (percentile=="50"){
+#     fit_interc <- apply(posts$beta0, 2, median)
+#   }else if (percentile=="2.5"){
+#     fit_interc <- apply(posts$beta0, 2, quantile, probs = c(0.025))
+#   }else if (percentile=="97.5"){
+#     fit_interc <- apply(posts$beta0, 2, quantile, probs = c(0.975))
+#   }
+#   return(fit_interc)
+# }
 
 
 #==============================================================================
@@ -319,10 +341,11 @@ MCA_plot <- function(country){
 #'
 #' @param country Character string indicating the country to analyze
 #' @param percentile Character string indicating which percentile to use ("50", "2.5", or "97.5")
+#' @param n_age_groups Integer. Number of age groups. If NULL, will be inferred from country's data.
 #' @return A combined ggplot object with two plots arranged vertically
-estBeta_mcaNPI <- function(country,percentile) {
+estBeta_mcaNPI <- function(country, percentile, n_age_groups = NULL) {
   # Combine beta coefficients with MCA factors, filtering to matching date range
-  beta_df <- fitted_beta_coefficients(country, percentile)
+  beta_df <- fitted_beta_coefficients(country, percentile, n_age_groups)
   mca_df <- mca_factors(country)
   
   # Get date ranges from comix data
@@ -380,8 +403,9 @@ estBeta_mcaNPI <- function(country,percentile) {
 #'
 #' @param country Character string indicating the country to analyze
 #' @param percentile Character string indicating which percentile to use ("50", "2.5", or "97.5")
+#' @param n_age_groups Integer. Number of age groups. If NULL, will be inferred from country's data.
 #' @return A list containing all data needed for Stan modeling
-reg_data_to_stan_list <- function(country, percentile){
+reg_data_to_stan_list <- function(country, percentile, n_age_groups = NULL){
   
   mca_df <- mca_factors(country)
   min_date <- min(comix_dates(country)[,1])
@@ -390,16 +414,34 @@ reg_data_to_stan_list <- function(country, percentile){
     filter(date >= min_date) %>%
     filter(date <= max_date)
   
+  # Get beta coefficients and contact data with age group awareness
+  beta_coeff <- fitted_beta_coefficients(country, percentile, n_age_groups)
+  contact_data_result <- contact_data(country, age_group_labels = NULL, age_group_mapping = NULL)
+  
+  # Extract data dimensions
+  comix_data <- contact_data_result[[2]][,-1]  # Remove first column (likely dates)
+  polymod_data <- contact_data_result[[1]]
+  
+  # --- compute eta ---
+  Y_mat <- as.matrix(comix_data)       # T × 36
+  X_mat <- t(as.matrix(polymod_data))  # 36 × 4
+  XtX_inv  <- solve(t(X_mat) %*% X_mat)
+  c_matrix <- t(XtX_inv %*% t(X_mat) %*% t(Y_mat))     # T × 4
+  Y_hat    <- t(X_mat %*% t(c_matrix))                  # T × 36
+  eta_vec  <- colMeans(Y_mat - Y_hat)                   # 36-vector
+  # -------
+  
   reg_data = list(n_train = nrow(filtered_mca[,-1]),
                   n_pred = nrow(mca_df[,-1]),
-                  K = ncol(fitted_beta_coefficients(country,percentile)[,-c(1,2,4,6,8)]),  #number of regressions
+                  K = ncol(beta_coeff[,-c(1,2,4,6,8)]),  #number of regressions (should be 4 for home/work/school/other)
                   J = ncol(mca_df)-1,  #number of factor dimensions
-                  I = ncol(contact_data(country)[[2]][,-1]),
+                  I = ncol(contact_data_result[[2]][,-1]),  #number of contact pairs (n_age_groups^2)
                   x_train = filtered_mca[,-1],
                   x_pred = mca_df[,-1],
-                  beta_train = fitted_beta_coefficients(country,percentile)[,-c(1,2,4,6,8)],
-                  beta0_train = fitted_interc(country,percentile),
-                  X = t(as.matrix(contact_data(country)[[1]][,])))
+                  beta_train = beta_coeff[,-c(1,2,4,6,8)],
+                  eta  = eta_vec,     # NEW: 36-vector fixed intercept
+                  #beta0_train = fitted_interc(country, percentile, n_age_groups),
+                  X = t(as.matrix(contact_data_result[[1]][,])))
   
   return(reg_data)
 }

@@ -11,18 +11,28 @@
 #' @param n_thin Thinning rate (only keeping every n_thin samples)
 #' @param n_adapt_delta Target acceptance rate
 #' @param n_max_treedepth Maximum depth of the trees evaluated by NUTS
+#' @param age_group_labels Character vector. Labels for age groups. If NULL, uses defaults.
+#' @param age_group_mapping Character vector. Mapping for POLYMOD aggregation. If NULL, uses defaults.
 #' @return A fitted Stan model object
 nuts_fit <- function(model, country, n_chains, n_warmups, n_iter, n_thin, 
-                     n_adapt_delta,n_max_treedepth){
-  fit_by_country <-  stan(model,
-                          data = data_to_stan_list(country), 
-                          pars = parameters , 
-                          #init = inits(country), 
-                          chains = n_chains, 
-                          warmup = n_warmups, 
-                          iter = n_iter, 
-                          thin=n_thin, 
-                          control=list(adapt_delta=n_adapt_delta, max_treedepth=n_max_treedepth), seed=4321)
+                     n_adapt_delta, n_max_treedepth,
+                     age_group_labels = NULL,
+                     age_group_mapping = NULL) {
+  
+  # Prepare data for Stan
+  stan_data <- data_to_stan_list(country, age_group_labels, age_group_mapping)
+  
+  fit_by_country <- stan(model,
+                         data = stan_data, 
+                         pars = parameters, 
+                         #init = inits(country), 
+                         chains = n_chains, 
+                         warmup = n_warmups, 
+                         iter = n_iter, 
+                         thin = n_thin, 
+                         control = list(adapt_delta = n_adapt_delta, 
+                                        max_treedepth = n_max_treedepth), 
+                         seed = 4321)
   
   return(fit_by_country)
 }
@@ -34,16 +44,29 @@ nuts_fit <- function(model, country, n_chains, n_warmups, n_iter, n_thin,
 #' and the corresponding file exists before attempting to load it.
 #' 
 #' @param country A character string with the ISO 2-letter country code
+#' @param n_age_groups Integer. Number of age groups used in the model. If provided,
+#'                    will look for files with age group suffix first.
 #' @return A fitted Stan model object loaded from the RData file
 #' @throws Error if the country is invalid or the file doesn't exist
-load_fit <- function(country) {
+load_fit <- function(country, n_age_groups = NULL) {
   valid_countries <- c("AT","BE","HR","DK","EE","FI","FR","GR","HU",
                        "IT","LT","NL","PL","PT","SK","SI","ES","UK")
   
   if (!country %in% valid_countries) {
     stop("Invalid country. Please choose from: ", paste(valid_countries, collapse = ", "))
   }
-  data_file <- paste0('outputs_level1/',country, '_TVEM.RData')
+  
+  # Try to load file with age group suffix first, then fallback to original naming
+  if (!is.null(n_age_groups)) {
+    data_file <- paste0('outputs_level1/', country, '_TVEM_', n_age_groups, 'groups.RData')
+  } else {
+    data_file <- paste0('outputs_level1/', country, '_TVEM.RData')
+  }
+  
+  # If the file with age group suffix doesn't exist, try the original naming
+  if (!file.exists(data_file) && !is.null(n_age_groups)) {
+    data_file <- paste0('outputs_level1/', country, '_TVEM.RData')
+  }
   
   if (file.exists(data_file)) {
     loaded_env <- new.env()

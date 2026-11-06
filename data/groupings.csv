@@ -1,0 +1,429 @@
+Country,Wave,Cohort
+Austria,1,A1
+Austria,1,C1
+Austria,2,A2
+Austria,2,C1
+Austria,3,A3
+Austria,3,C1
+Austria,4,A4
+Austria,4,C2
+Austria,5,A5
+Austria,5,C2
+Austria,6,A6
+Austria,6,C2
+Austria,7,A7
+Austria,7,C2
+Belgium,1,A1
+Belgium,2,A2
+Belgium,3,A3
+Belgium,4,A4
+Belgium,5,A5
+Belgium,6,A6
+Belgium,7,A7
+Belgium,8,A8
+Belgium,9,Panel B9
+Belgium,9,Panel BC9
+Belgium,10,Panel B10
+Belgium,10,Panel BC10
+Belgium,11,Panel B11
+Belgium,11,Panel BC11
+Belgium,12,B12
+Belgium,13,B13
+Belgium,14,B14
+Belgium,15,B15
+Belgium,16,B16
+Belgium,17,B17
+Belgium,18,B18
+Belgium,19,B19
+Belgium,20,B20
+Belgium,21,B21
+Belgium,22,B22
+Belgium,23,B23
+Belgium,24,B24
+Belgium,25,B25
+Belgium,26,B26
+Belgium,27,B27
+Belgium,28,B28
+Belgium,29,B29
+Belgium,30,B30
+Belgium,31,B31
+Belgium,32,B32
+Belgium,33,B33
+Belgium,34,B34
+Belgium,35,B35
+Belgium,36,B36
+Belgium,37,B37
+Belgium,38,B38
+Belgium,39,B39
+Belgium,40,B40
+Belgium,41,B41
+Belgium,42,B42
+Belgium,43,B43
+Croatia,1,A1
+Croatia,1,C1
+Croatia,2,A2
+Croatia,2,C1
+Croatia,3,A3
+Croatia,3,C1
+Croatia,4,A4
+Croatia,4,C2
+Croatia,5,A5
+Croatia,5,C2
+Croatia,6,A6
+Croatia,6,C2
+Croatia,7,A7
+Croatia,7,C2
+Denmark,1,A1
+Denmark,1,C1
+Denmark,2,A2
+Denmark,2,C1
+Denmark,3,A3
+Denmark,3,C1
+Denmark,4,A4
+Denmark,4,C2
+Denmark,5,A5
+Denmark,5,C2
+Denmark,6,A6
+Denmark,6,C2
+Denmark,7,A7
+Denmark,7,C2
+Estonia,1,A1
+Estonia,1,C1
+Estonia,2,A2
+Estonia,2,C1
+Estonia,3,A3
+Estonia,3,C1
+Estonia,4,A4
+Estonia,4,C2
+Estonia,5,A5
+Estonia,5,C2
+Estonia,6,A6
+Estonia,6,C2
+Estonia,7,A7
+Estonia,7,C2
+Finland,1,A1
+Finland,1,C1
+Finland,2,A2
+Finland,2,C1
+Finland,3,A3
+Finland,3,C1
+Finland,4,A4
+Finland,4,C2
+Finland,5,A5
+Finland,5,C2
+Finland,6,A6
+Finland,6,C2
+Finland,7,A7
+Finland,7,C2
+Finland,8,B1
+Finland,8,C2
+Finland,9,B2
+Finland,9,C2
+Finland,10,B3
+Finland,10,C2
+Finland,11,B4
+Finland,11,C2
+Finland,12,B5
+Finland,12,C2
+Finland,13,B6
+Finland,13,C2
+France,1,A1
+France,1,C1
+France,2,A2
+France,2,C1
+France,3,A3
+France,3,C1
+France,4,A4
+France,4,C2
+France,5,A5
+France,5,C2
+France,6,A6
+France,6,C2
+France,7,A7
+France,7,C2
+Greece,1,A1
+Greece,1,C1
+Greece,2,A2
+Greece,2,C1
+Greece,3,A3
+Greece,3,C2
+Greece,4,A4
+Greece,4,C2
+Greece,5,A5
+Greece,5,C2
+Greece,6,A6
+Greece,6,C2
+Greece,7,A7
+Greece,7,C2
+Hungary,1,A1
+Hungary,1,C1
+Hungary,2,A2
+Hungary,2,C1
+Hungary,3,A3
+Hungary,3,C1
+Hungary,4,A4
+Hungary,4,C2
+Hungary,5,A5
+Hungary,5,C2
+Hungary,6,A6
+Hungary,6,C2
+Hungary,7,A7
+Hungary,7,C2
+Italy,1,A1
+Italy,1,C1
+Italy,2,A2
+Italy,2,C1
+Italy,3,A3
+Italy,3,C1
+Italy,4,A4
+Italy,4,C2
+Italy,5,A5
+Italy,5,C2
+Italy,6,A6
+Italy,6,C2
+Italy,7,A7
+Italy,7,C2
+Lithuania,1,A1
+Lithuania,1,C1
+Lithuania,2,A2
+Lithuania,2,C1
+Lithuania,3,A3
+Lithuania,3,C1
+Lithuania,4,A4
+Lithuania,4,C2
+Lithuania,5,A5
+Lithuania,5,C2
+Lithuania,6,A6
+Lithuania,6,C2
+Lithuania,7,A7
+Lithuania,7,C2
+Lithuania,8,B1
+Lithuania,8,C2
+Lithuania,9,B2
+Lithuania,9,C2
+Lithuania,10,B3
+Lithuania,10,C2
+Lithuania,11,B4
+Lithuania,11,C2
+Lithuania,12,B5
+Lithuania,12,C2
+Lithuania,13,B6
+Lithuania,13,C2
+Netherlands,1,A1
+Netherlands,2,A2
+Netherlands,3,A3
+Netherlands,4,A4
+Netherlands,5,A5
+Netherlands,6,A6
+Netherlands,7,A7
+Netherlands,8,A8
+Netherlands,9,B9
+Netherlands,10,B10
+Netherlands,11,B11
+Netherlands,12,B12
+Netherlands,13,B13
+Netherlands,14,B14
+Netherlands,15,B15
+Netherlands,16,B16
+Netherlands,17,B17
+Netherlands,18,B18
+Netherlands,19,B19
+Netherlands,20,B20
+Netherlands,21,B21
+Netherlands,22,B22
+Netherlands,23,B23
+Netherlands,24,B24
+Netherlands,25,B25
+Netherlands,26,B26
+Netherlands,27,B27
+Netherlands,28,B28
+Poland,1,A1
+Poland,1,C1
+Poland,2,A2
+Poland,2,C1
+Poland,3,A3
+Poland,3,C1
+Poland,4,A4
+Poland,4,C2
+Poland,5,A5
+Poland,5,C2
+Poland,6,A6
+Poland,6,C2
+Poland,7,A7
+Poland,7,C2
+Portugal,1,A1
+Portugal,1,C1
+Portugal,2,A2
+Portugal,2,C1
+Portugal,3,A3
+Portugal,3,C1
+Portugal,4,A4
+Portugal,4,C1
+Portugal,5,A5
+Portugal,5,C1
+Portugal,6,A6
+Portugal,6,C1
+Portugal,7,A7
+Portugal,7,C2
+Slovakia,1,A1
+Slovakia,1,C1
+Slovakia,2,A2
+Slovakia,2,C1
+Slovakia,3,A3
+Slovakia,3,C1
+Slovakia,4,A4
+Slovakia,4,C2
+Slovakia,5,A5
+Slovakia,5,C2
+Slovakia,6,A6
+Slovakia,6,C2
+Slovakia,7,A7
+Slovakia,7,C2
+Slovenia,1,A1
+Slovenia,1,C1
+Slovenia,2,A2
+Slovenia,2,C1
+Slovenia,3,A3
+Slovenia,3,C1
+Slovenia,4,A4
+Slovenia,4,C2
+Slovenia,5,A5
+Slovenia,5,C2
+Slovenia,6,A6
+Slovenia,6,C2
+Slovenia,7,A7
+Slovenia,7,C2
+Spain,1,A1
+Spain,1,C1
+Spain,2,A2
+Spain,2,C1
+Spain,3,A3
+Spain,3,C1
+Spain,4,A4
+Spain,4,C1
+Spain,5,A5
+Spain,5,C1
+Spain,6,A6
+Spain,6,C1
+Spain,7,A7
+Spain,7,C2
+United Kingdom,1,A1
+United Kingdom,1,C1
+United Kingdom,2,B1
+United Kingdom,2,C1
+United Kingdom,3,A2
+United Kingdom,3,C1
+United Kingdom,4,B2
+United Kingdom,4,C1
+United Kingdom,5,A3
+United Kingdom,5,C1
+United Kingdom,6,B3
+United Kingdom,6,C1
+United Kingdom,7,A4
+United Kingdom,7,C1
+United Kingdom,8,B4
+United Kingdom,8,D1
+United Kingdom,9,A5
+United Kingdom,9,C2
+United Kingdom,10,B5
+United Kingdom,10,D2
+United Kingdom,11,A6
+United Kingdom,11,C3
+United Kingdom,12,B6
+United Kingdom,12,D3
+United Kingdom,13,A7
+United Kingdom,13,C4
+United Kingdom,14,B7
+United Kingdom,14,D4
+United Kingdom,15,A8
+United Kingdom,15,C5
+United Kingdom,16,B8
+United Kingdom,16,D5
+United Kingdom,17,A9
+United Kingdom,17,C6
+United Kingdom,18,B9
+United Kingdom,18,C6
+United Kingdom,19,A10
+United Kingdom,19,C6
+United Kingdom,20,E1
+United Kingdom,21,F1
+United Kingdom,22,E2
+United Kingdom,23,F2
+United Kingdom,24,E3
+United Kingdom,25,F3
+United Kingdom,26,E4
+United Kingdom,27,F4
+United Kingdom,28,E5
+United Kingdom,29,F5
+United Kingdom,30,E6
+United Kingdom,31,F6
+United Kingdom,32,E7
+United Kingdom,33,F7
+United Kingdom,34,E8
+United Kingdom,35,F8
+United Kingdom,36,E9
+United Kingdom,37,F9
+United Kingdom,38,E10
+United Kingdom,39,F10
+United Kingdom,40,E11
+United Kingdom,41,F11
+United Kingdom,42,E12
+United Kingdom,43,F12
+United Kingdom,44,E13
+United Kingdom,45,F13
+United Kingdom,46,E14
+United Kingdom,47,F14
+United Kingdom,48,E15
+United Kingdom,49,F15
+United Kingdom,50,E16
+United Kingdom,51,F16
+United Kingdom,52,E17
+United Kingdom,53,F17
+United Kingdom,54,E18
+United Kingdom,55,F18
+United Kingdom,56,E19
+United Kingdom,57,F19
+United Kingdom,58,E20
+United Kingdom,59,F20
+United Kingdom,60,E21
+United Kingdom,61,F21
+United Kingdom,62,E22
+United Kingdom,63,F22
+United Kingdom,64,E23
+United Kingdom,65,F23
+United Kingdom,66,E24
+United Kingdom,67,F24
+United Kingdom,68,E25
+United Kingdom,69,F25
+United Kingdom,70,E26
+United Kingdom,71,F26
+United Kingdom,72,E27
+United Kingdom,73,F27
+United Kingdom,74,E28
+United Kingdom,75,F28
+United Kingdom,76,E29
+United Kingdom,77,F29
+United Kingdom,78,E30
+United Kingdom,79,F30
+United Kingdom,80,E31
+United Kingdom,81,F31
+United Kingdom,82,E32
+United Kingdom,83,F32
+United Kingdom,84,E33
+United Kingdom,85,F33
+United Kingdom,86,E34
+United Kingdom,87,F34
+United Kingdom,88,E35
+United Kingdom,89,F35
+United Kingdom,90,E36
+United Kingdom,91,F36
+United Kingdom,92,E37
+United Kingdom,93,F37
+United Kingdom,94,E38
+United Kingdom,95,F38
+United Kingdom,96,E39
+United Kingdom,97,F39
+United Kingdom,98,E40
+United Kingdom,99,F40
+United Kingdom,100,E41
+United Kingdom,101,F41

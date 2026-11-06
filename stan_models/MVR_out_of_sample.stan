@@ -7,7 +7,7 @@ data {
   matrix[n_train,J] x_train;  // MCA factor dimensions
   matrix[n_pred,J] x_pred;
   vector[K] beta_train[n_train];
-  vector[I] beta0_train;  
+  vector[I] eta;   // fixed intercept, precomputed in R
   matrix[I, K] X;   // Polymod
 }
 
@@ -66,7 +66,7 @@ generated quantities {
   
   for (i in 1:I){
     for (t in 1:n_pred) {
-      C_pred[t,i] = beta0_train[i]+beta_pred[t,1]*X[i,1]+beta_pred[t,2]*X[i,2]+beta_pred[t,3]*X[i,3]+beta_pred[t,4]*X[i,4];
+      C_pred[t,i] = eta[i]+beta_pred[t,1]*X[i,1]+beta_pred[t,2]*X[i,2]+beta_pred[t,3]*X[i,3]+beta_pred[t,4]*X[i,4];
     }
   }
   

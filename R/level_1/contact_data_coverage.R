@@ -186,10 +186,14 @@ create_eu_eea_contact_map <- function(save_plot = FALSE,
 #' for a specified country, broken down by setting (Home, Work, School, Other).
 #'
 #' @param country Character string. The country code for which to generate heatmaps.
+#' @param n_age_groups Integer. Number of age groups. If NULL, will be inferred from data.
+#' @param age_group_labels Character vector. Labels for age groups. If NULL, will be inferred from data.
 #'
 #' @return A list containing matrices by setting, or NULL if no POLYMOD data is available.
 #'         Heatmaps are saved to a "heatmaps_{country}/figures" directory.
-POLYMOD_heatmaps <- function(country) {
+POLYMOD_heatmaps <- function(country, 
+                             n_age_groups = NULL, 
+                             age_group_labels = NULL) {
   # Get POLYMOD data for the specified country
   polymod_data <- contact_data(country)$polymod
   
@@ -197,6 +201,29 @@ POLYMOD_heatmaps <- function(country) {
   if (is.null(polymod_data)) {
     warning(paste("No POLYMOD data available for country:", country))
     return(NULL)
+  }
+  
+  # Infer n_age_groups and age_group_labels from data if not provided
+  if (is.null(n_age_groups)) {
+    # Assume the data is square matrices, so take sqrt of number of columns
+    total_elements <- ncol(polymod_data)
+    n_age_groups <- sqrt(total_elements)
+    if (n_age_groups != round(n_age_groups)) {
+      stop(paste("Cannot infer number of age groups. Expected square matrix but got", 
+                 total_elements, "elements."))
+    }
+    n_age_groups <- round(n_age_groups)
+  }
+  
+  if (is.null(age_group_labels)) {
+    # Generate default labels
+    age_group_labels <- paste0("Group_", 1:n_age_groups)
+  }
+  
+  # Validate that we have the right number of labels
+  if (length(age_group_labels) != n_age_groups) {
+    stop(paste("Number of age group labels (", length(age_group_labels), 
+               ") does not match n_age_groups (", n_age_groups, ")"))
   }
   
   # Create directory for saving heatmaps if it doesn't exist
@@ -217,17 +244,21 @@ POLYMOD_heatmaps <- function(country) {
   # Initialize a list to store the matrices
   matrices <- list()
   
+  # Calculate expected number of elements in each matrix
+  expected_elements <- n_age_groups * n_age_groups
+  
   # Check if we have the expected 4 rows (one per setting)
   if (nrow(polymod_data) == 4) {
     # Process each row as a separate setting
     for (i in 1:nrow(polymod_data)) {
       row_data <- as.numeric(polymod_data[i, ])
-      if (length(row_data) == 16) {
-        matrix_4x4 <- matrix(row_data, nrow = 4, byrow = TRUE)
-        matrices[[i]] <- matrix_4x4
+      if (length(row_data) == expected_elements) {
+        matrix_nxn <- matrix(row_data, nrow = n_age_groups, byrow = TRUE)
+        matrices[[i]] <- matrix_nxn
       } else {
         warning(paste("Row", i, "for country", country, 
-                      "has unexpected length", length(row_data)))
+                      "has unexpected length", length(row_data), 
+                      "expected", expected_elements))
       }
     }
   } else {
@@ -236,18 +267,16 @@ POLYMOD_heatmaps <- function(country) {
     
     for (i in 1:nrow(polymod_data)) {
       row_data <- as.numeric(polymod_data[i, ])
-      if (length(row_data) == 16) {
-        matrix_4x4 <- matrix(row_data, nrow = 4, byrow = TRUE)
-        matrices[[i]] <- matrix_4x4
+      if (length(row_data) == expected_elements) {
+        matrix_nxn <- matrix(row_data, nrow = n_age_groups, byrow = TRUE)
+        matrices[[i]] <- matrix_nxn
       }
     }
   }
   
-  # Define age group names
-  row_col_names <- c("[0-18)", "[18,45)", "[45,64)", "65+")
-  
+  # Use the provided age group labels
   for (i in seq_along(matrices)) {
-    dimnames(matrices[[i]]) <- list(row_col_names, row_col_names)
+    dimnames(matrices[[i]]) <- list(age_group_labels, age_group_labels)
   }
   
   # Function to create heatmap
@@ -312,19 +341,44 @@ POLYMOD_heatmaps <- function(country) {
 #' for a specified country across multiple time points during the COVID-19 pandemic.
 #'
 #' @param country Character string. The country code for which to generate CoMix heatmaps.
+#' @param n_age_groups Integer. Number of age groups. If NULL, will be inferred from data.
+#' @param age_group_labels Character vector. Labels for age groups. If NULL, will be inferred from data.
 #'
 #' @return A list containing:
 #'   \item{dates}{Vector of dates for which matrices are available}
 #'   \item{matrices}{List of contact matrices for each date}
 #'         Heatmaps are saved to a "heatmaps_{country}/figures" directory.
-CoMix_heatmaps_real_time <- function(country) {
+CoMix_heatmaps_real_time <- function(country, 
+                                     n_age_groups = NULL, 
+                                     age_group_labels = NULL) {
   # Load CoMix data
   time_comix <- as.Date(comix_dates(country)[,1])
   date_column <- as.Date(time_comix)
   comix_matrix <- as.matrix(contact_data(country)[[2]][,-1])
   num_cols <- ncol(comix_matrix)
-  age_groups <- 4
-  expected_cols <- age_groups * age_groups
+  
+  # Infer n_age_groups and age_group_labels from data if not provided
+  if (is.null(n_age_groups)) {
+    # Assume the data represents square matrices, so take sqrt of number of columns
+    n_age_groups <- sqrt(num_cols)
+    if (n_age_groups != round(n_age_groups)) {
+      stop(paste("Cannot infer number of age groups. Expected square matrix but got", 
+                 num_cols, "columns."))
+    }
+    n_age_groups <- round(n_age_groups)
+  }
+  
+  if (is.null(age_group_labels)) {
+    # Generate default labels
+    age_group_labels <- paste0("Group_", 1:n_age_groups)
+  }
+  
+  # Validate inputs
+  expected_cols <- n_age_groups * n_age_groups
+  if (length(age_group_labels) != n_age_groups) {
+    stop(paste("Number of age group labels (", length(age_group_labels), 
+               ") does not match n_age_groups (", n_age_groups, ")"))
+  }
   
   if (num_cols != expected_cols) {
     warning(paste("Expected", expected_cols, "columns but found", num_cols, 
@@ -342,21 +396,15 @@ CoMix_heatmaps_real_time <- function(country) {
   # Fill in missing dates to create a complete time series
   df_complete <- tidyr::complete(merged_data, date_column = date_seq)
   
-  # Fill in missing dates to create a complete time series
-  #df_complete <- complete(merged_data, date_column = seq(min_date, max_date, by = "day"))
-  
   # Transform df_complete into a list of matrices with corresponding dates
   list_of_matrices <- lapply(seq_len(nrow(df_complete)), function(i) {
-    # Reshape the data into a 4x4 matrix
-    matrix(as.numeric(df_complete[i, 2:(num_cols+1)]), nrow = age_groups, byrow = TRUE)
+    # Reshape the data into an n_age_groups x n_age_groups matrix
+    matrix(as.numeric(df_complete[i, 2:(num_cols+1)]), nrow = n_age_groups, byrow = TRUE)
   })
-  
-  # Define proper row and column names for 4 age groups
-  row_col_names <- c("[0-18)", "[18,45)", "[45,64)", "65+")
   
   # Assign row and column names to each matrix
   for (i in seq_along(list_of_matrices)) {
-    dimnames(list_of_matrices[[i]]) <- list(row_col_names, row_col_names)
+    dimnames(list_of_matrices[[i]]) <- list(age_group_labels, age_group_labels)
   }
   
   # Create directory for saving heatmaps if it doesn't exist

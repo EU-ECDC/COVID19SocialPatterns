@@ -1,58 +1,76 @@
-# Impact of human behaviour and social determinants on the adherence to healthcare interventions in the post-acute COVID-19 society
+# Reconstructing age-specific social contact patterns across 28 EU/EEA countries during the COVID-19 pandemic: linking non-pharmaceutical interventions to social mixing, 2020–2022
 
 This Github repository contains the code used to extend the existing social contact data of the COVID-19 pandemic to 28 EU/EEA Member States over the whole time period from 2020-2022 (also between data collections). Using the available CoMix data for Austria, Belgium, Croatia, Denmark, Estonia, Finland, France, Greece, Hungary, Italy, Lithuania, Netherlands, Poland, Portugal, Slovakia, Slovenia, Spain and Switzerland, social contact patterns observed during the pandemic were linked to pre-pandemic social contact patterns through a time-varying effect model (Level 1). The estimated changes in social contact patterns were then related to the implementation of Non-Pharmaceutical interventions (NPIs) for which data are available during the whole COVID pandemic period. Through the NPIs out of sample predictions of the change in contacts were generated and consequently the average number of contacts. For countries without CoMix contact data; Czech Republic, Bulgaria, Cyprus, Ireland, Latvia, Luxembourg, Malta, Romania, Sweden, Iceland, Germany the average number of contacts between age groups was generated using the out of sample predictions from the countries with CoMix data based on clustering and NPI similarity (Level 2).
 
 ### Relate pre-pandemic contact patterns to pandemic contact patterns for EU/EEA Member States with data for both time periods
 
-* Consider 4 age groups: [0,18), [18,45), [45,65) and 65+
+* Consider 6 age groups: [0,10), [10,20), [20,25), [25,45), [45,65) and 65+
 * $\mathbf{Y_{ijw}}$: average number of contacts for individuals in age group $j$ with individuals of age group $i$ at time $w$, where $w$ denotes the waves of the CoMix survey.
-  
   $\mathbf{Z_{ij}^k}$: pre-pandemic average number of contacts for individuals in age group $j$ with individuals of age group $i$ at location $k$ where $k$ corresponds to home, work, school and other places.
-* $Y_{ijw} \sim \mathcal{N}(\mu_{ijw},\sigma^2)$
   
-  μ<sub>ijw</sub> = η<sub>ij</sub> + β<sub>1</sub>(w)Z<sub>ij</sub><sup>home</sup> + β<sub>2</sub>(w)Z<sub>ij</sub><sup>work</sup> + β<sub>3</sub>(w)Z<sub>ij</sub><sup>school</sup> + β<sub>4</sub>(w)Z<sub>ij</sub><sup>other</sup> **[Level 1]**
-  
-  where $\eta_{ij}$ denotes pair specific random effects, $\beta_p(w)$ ($p=1,2,3,4$) are **smooth coefficient functions of time** $w$ (time-varying effect model (TVEM), Lajot et al. (2023)).
+$$
+\begin{aligned}
+Y_{ijw} &\sim \mathcal{N}(\mu_{ijw},\sigma^2)\\
+\mu_{ijw} &= \eta_{ij}+\beta_1(w)Z^{home}_{ij}+\beta_2(w)Z^{work}_{ij}+\beta_3(w)Z^{school}_{ij}+\beta_4(w)Z^{other}_{ij}\qquad\textbf{[Level 1]}
+\end{aligned}
+$$
 
-* $\beta_p(w)=\sum_{j=1}^{K}\alpha_{pj}B_j(w)$
-
+where $\eta_{ij}$ is a fixed, pair-specific term representing the time-constant component of pandemic contacts between age groups that cannot be attributed to any linear combination of the four pre-pandemic POLYMOD location matrices (it is precomputed from the data as the time-average of the per-wave residuals obtained after projecting the observed CoMix contact matrix onto the subspace spanned by the four POLYMOD location-specific matrices), and $\beta_p(w)$ ($p=1,2,3,4$) are \textbf{smooth coefficient functions of time} $w$ (time-varying effect model (TVEM), Lajot et al. (2023)).
+ 
+$$
+\beta_p(w)=\sum_{j=1}^{K}\alpha_{pj}B_j(w)
+$$
+ 
   where $K$ is the number of B-spline basis functions, $a_{pj}$ are the coefficients associated with each basis function and $B_j(w)$ is a B-spline basis function.
 
 * Random-walk prior on the coefficients $a_j$ to reduce the risk of a prior choice of a large number of knots resulting in overfitting
-   
-  $a_{p1} \sim \mathcal{N}(0,1)$
-  
-  $a_{pj} \sim \mathcal{N}(a_{p,j-1},\tau_p)$
+
+$$
+a_{p1} \sim \mathcal{N}(0,1)
+$$
+ 
+$$
+a_{pj} \sim \mathcal{N}(a_{p,j-1},\tau_p)
+$$
+
    
 ### Fill in gaps in countries with pandemic data with incomplete time coverage by relating changes in social contact patterns to non-pharmaceutical interventions
 
 * $\widehat{\beta_p(w)}$: time-varying expected change in the contacts between two age groups during the pandemic resulting from a change of one contact between those age groups at different locations before the pandemic (Level 1).
 * NPIs related to physical distancing measures are highly correlated $\rightarrow$ Multiple correspondence analysis (MCA) - use first 5 dimensions.
-* $\hat{\mathbf{\beta_t}} \sim \mathrm{MVN}(\mathbf{m_t},\mathbf{\Sigma})$
-  
-  $\mathbf{m_t} = \mathbf{\delta_0}+\mathbf{\delta_1} Dim1_t+\mathbf{\delta_2} Dim2_t+\mathbf{\delta_3} Dim3_t+\mathbf{\delta_4} Dim4_t+\mathbf{\delta_5} Dim5_t$  **[Level 2]**
 
-  where $\hat{\mathbf{\beta_t}}=(\hat{\beta_{1t}}, \hat{\beta_{2t}}, \hat{\beta_{3t}}, \hat{\beta_{4t}})$.
+$$
+\begin{aligned}
+\hat{\mathbf{\beta_t}} &\sim \mathrm{MVN}(\mathbf{m_t},\mathbf{\Sigma})\\
+\mathbf{m_t} &= \mathbf{\delta_0}+\mathbf{\delta_1} Dim1_t+\mathbf{\delta_2} Dim2_t+\mathbf{\delta_3} Dim3_t+\mathbf{\delta_4} Dim4_t+\mathbf{\delta_5} Dim5_t\qquad\textbf{[Level 2]}
+\end{aligned}
+$$
+ 
+where $\hat{\mathbf{\beta_t}}=(\hat{\beta_{1t}}, \hat{\beta_{2t}}, \hat{\beta_{3t}}, \hat{\beta_{4t}})$.
 * Assumption: adopted measures had the same effect on the change in contacts across time $\rightarrow$ use the estimated $\delta_q$ to generate out-of-sample predictions of the change in the number of contacts between age groups $\mathbf{\beta_t}$ in sampling points where there are available measurements of NPIs, but no contact data.
 
 ### Infer pandemic contact patterns for EU/EEA Member States with pre-pandemic data (but not pandemic data)
 
 * Rely on estimates for the countries with CoMix data
-* For every target country without pandemic data (no CoMix country) assign a “neighbouring” country (CoMix country) with pandemic data.
+* For every target country without pandemic data (no CoMix country) assign a matched country (CoMix country) with pandemic data.
 * Summarise NPIs related to physical distancing by the first 5 factor dimensions of an MCA for each country
 * Compute the Euclidean distances between the factor dimensions matrices for all possible pairs of countries using the Frobenius norm and perform hierarchical clustering based on these distances
 * Identify a CoMix country within the same cluster as the target country and confirm that they also belong in the same cluster based on their socio-demographic characteristics according to Prem et al.(2017)
 * Assume that countries in the same cluster responded in the same way to the implemented NPIs under the physical distancing category, as expressed by their first 5 factor dimensions of the MCA on the NPIs.
 * Sample the vector of changes in contacts for different locations for a target country without CoMix $\mathbf{\beta_t^{nc}}=(\beta_{1t}^{nc}, \beta_{2t}^{nc}, \beta_{3t}^{nc}, \beta_{4t}^{nc})$, from a multivariate normal with mean $\hat{\mathbf{\delta_0}}^c+\hat{\mathbf{\delta_1}}^c Dim1_t^{nc}+\hat{\mathbf{\delta_2}}^c Dim2_t^{nc}+\hat{\mathbf{\delta_3}}^c Dim3_t^{nc}+\hat{\mathbf{\delta_4}}^c Dim4_t^{nc}+\hat{\mathbf{\delta_5}}^c Dim5_t^{nc}$ and covariance matrix $\hat{\boldsymbol{\Sigma}}^c$. The estimated marginal effects of the factor dimensions for a CoMix country are denoted by $\hat{\mathbf{\delta_q}}^c$, $q=0,1,2,3,4,5$, $\hat{\boldsymbol{\Sigma}}^c$ is the estimated covariance matrix of a CoMix country and $Dim1_t^{nc}, Dim2_t^{nc}, Dim3_t^{nc}, Dim4_t^{nc}, Dim5_t^{nc}$ represent the first five factor dimensions of an MCA on all the NPIs under the physical distancing category for the target country without CoMix data.
 * Given the generated changes in contacts, transform them into the pandemic contacts considering a linear combination of the pre-pandemic contacts in different locations (home, work, school and other places) as follows:
-  C<sub>ijw</sub><sup>nc</sup> = β<sub>1</sub><sup>nc</sup>(w)Z<sub>ij</sub><sup>home</sup> + β<sub>2</sub><sup>nc</sup>(w)Z<sub>ij</sub><sup>work</sup> + β<sub>3</sub><sup>nc</sup>(w)Z<sub>ij</sub><sup>school</sup> + β<sub>4</sub><sup>nc</sup>(w)Z<sub>ij</sub><sup>other</sup>
-  where $Z_{ij}^k$ denotes the pre-pandemic average number of contacts for individuals in age group $j$ with individuals of age group $i$ at location $k$ where $k$ corresponds to home, work, school and other places.
+  
+$$
+C_{ijw}^{nc}  = \eta_{ij}^{c} + \beta_1^{nc}(w)Z^{home}_{ij}+\beta_2^{nc}(w)Z^{work}_{ij}+\beta_3^{nc}(w)Z^{school}_{ij}+\beta_4^{nc}(w)Z^{other}_{ij}
+$$
+
+where $Z_{ij}^k$ denotes the pre-pandemic average number of contacts for individuals in age group $j$ with individuals of age group $i$ at location $k$ where $k$ corresponds to home, work, school and other places. The intercept $\eta_{ij}^{c}$ is borrowed from the matched CoMix country $c$, as no CoMix data are available for the target country $nc$ from which to compute country-specific projection residuals.
 
 ## Code Structure
 
 ### Main Script
   
-* [main.R](R/main.R) - The main script that runs the entire pipeline in three steps:
+* [main.R](main.R) - The main script that runs the entire pipeline in three steps:
  1. Creates an EU map with contact data coverage visualization and generates POLYMOD and CoMix heatmaps for each country
  2. Runs the Level 1 Time-Varying Effect Models (TVEM) analysis for each country with CoMix data using Stan’s No-U-Turn sampler variant of Hamiltonian Monte Carlo. Saves outputs and generated figures of the estimated coefficient functions and posterior predictive checks.
  3. Runs the Level 2 Multivariate Regression (MVR) analysis and performs clustering/matching for non-CoMix countries
@@ -136,9 +154,9 @@ The R folder contains all the scripts and functions. The following files/folders
 
 [stan_models](stan_models/) contains all the [Stan](https://mc-stan.org/) model statements used:
 
-* [m1_penalised_test.stan](stan_models/m1_penalised_test.stan) time-varying effect model
+* [m1_penalised.stan](stan_models/m1_penalised_test.stan) time-varying effect model without intercept
 
-* [m2_penalised.stan](stan_models/m2_penalised.stan) time-varying effect model with pair specific random effects
+* [m2_penalised.stan](stan_models/m2_penalised.stan) time-varying effect model with fixed pair-specific intercept, derived as the time-average of the per-wave projection residuals
 
 * [MVR_out_of_sample.stan](stan_models/MVR_out_of_sample.stan) multivariate regression model
 
@@ -166,10 +184,3 @@ This will:
 4. Perform clustering and matching to extend predictions to non-CoMix countries
 
 Individual components can also be run separately by sourcing the respective scripts.
-
-## Authors
-* Anastasia Chatzilena: <a.chatzilena@bristol.ac.uk>
-* Ewan Colman: <ewan.colman@bristol.ac.uk>
-* Nikolaos Demiris: <nikos@aueb.gr>
-* Ellen Brooks-Pollock: <ellen.brooks-pollock@bristol.ac.uk>
-* Leon Danon: <l.danon@bristol.ac.uk>
